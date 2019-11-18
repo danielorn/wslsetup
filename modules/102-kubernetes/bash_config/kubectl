@@ -1,0 +1,71 @@
+kgpo() {
+    if [[ -n "$1" && "$1" != -* ]]; then
+        local filter="-l app.kubernetes.io/name=$1"
+        shift
+    fi
+    kubectl2 get pods -o wide $filter "$@"
+}
+
+kgpo2() {
+    local filter=".*"
+    if [[ -n "$1" && "$1" != -* ]]; then
+        filter="$1"
+        shift
+    fi
+    echo -e  "\e[101m+ kubectl get pods -o wide $@ | awk NR==1 || /$filter/ \e[0m" >&2
+    kubectl get pods -o wide "$@" | awk "NR==1 || /$filter/"
+}
+
+kns() {
+    kubectl2 config set-context --current --namespace=$1
+}
+
+kcontext() {
+    kubectl2 config use-context $1
+    kubectl2 config set-context --current --namespace=$2
+}
+
+kpartof() {
+   type=$1
+   partof=$2
+   shift
+   shift
+   kubectl get $type -o wide -l app.kubernetes.io/part-of=$partof "$@"
+}
+
+kname() {
+   type=$1
+   name=$2
+   shift
+   shift
+   kubectl get $type -l app.kubernetes.io/name=$name --field-selector=status.phase=Running --no-headers=true -o custom-columns=:metadata.name
+}
+
+kexec() {
+    pod=$(kname pod $1)
+    shift
+    kubectl2 exec -it $pod "$@"
+}
+
+kbash() {
+    kexec "$@" bash
+}
+
+klogs() {
+    pod=$(kname pod $1)
+    shift
+    kubectl2 logs "$@" $pod
+}
+
+klogs100() {
+    klogs "$@" --tail=100
+}
+
+kubectl2() {
+    echo -e  "\e[101m+ kubectl $@ \e[0m" >&2
+    command kubectl "$@"
+}
+
+source <(kubectl completion bash)
+
+alias k='kubectl'

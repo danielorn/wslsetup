@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function usage {
+		echo "usage: $0 [posixpath]"
+		echo "  posixpath     POSIX compliant path"
+		echo ""
+		echo " Add a semicolon after drive letter"
+		echo " Removes the first slash"
+		echo " Replace all slashes with backslashes"
+		exit 0
+}
+
+if [ ${#@} -eq 0 ]; then
+	usage
+	exit 1
+fi
+
+echo "$1" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/'

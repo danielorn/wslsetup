@@ -1,0 +1,8 @@
+alias dstop='docker container stop $(docker container ls -aq)'
+
+alias d='docker'
+
+docker2() {
+    echo -e  "\e[101m+ docker $@ \e[0m" >&2
+    command docker "$@"
+}

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+function usage {
+		echo "usage: $0 [winpath]"
+		echo "  winpath     Windows path"
+		echo ""
+		echo " Replaces all backslashes with slashes"
+		echo " Removes the first colon after the drive letter"
+		echo " Converts drive letter to lower"
+		echo " Adds a slash at the beginning"
+		exit 0
+}
+
+if [ ${#@} -eq 0 ]; then
+	usage
+	exit 1
+fi
+path="$(tr '[:upper:]' '[:lower:]' <<< ${1:0:1})${1:1}"
+
+echo "/$path" | sed 's/\\/\//g' | sed 's/://'

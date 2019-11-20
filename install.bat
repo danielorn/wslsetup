@@ -34,6 +34,7 @@ ubuntu1804.exe install --root
 
 ECHO Setting WSLENV ...
 cmd.exe /c setx WSLENV USERNAME:USERPROFILE/p:DOCKER_HOST
+setx WSLENV USERNAME:USERPROFILE/p:DOCKER_HOST
 ECHO ... WSLENV is now %WSLENV%
 
 ECHO Configuring windows mount points in WSL
